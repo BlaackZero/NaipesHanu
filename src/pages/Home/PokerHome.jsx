@@ -20,8 +20,17 @@ export const PokerHome = () => {
         mazo.push({ figura, valor, color })
       })
     })
-    setBarajaIzquierda(mazo)
+    const randomCards = barajarMazo(mazo)
+    setBarajaIzquierda(randomCards)
   }
+
+  const barajarMazo = (array) => { 
+    for (let i = array.length - 1; i > 0; i--) { 
+      const j = Math.floor(Math.random() * (i + 1)); 
+      [array[i], array[j]] = [array[j], array[i]]; 
+    } 
+    return array; 
+  };
 
   const moverCarta = (origen, destino, setOrigen, setDestino) => {
     if (origen.length === 0) return;
@@ -34,19 +43,23 @@ export const PokerHome = () => {
     setDestino(nuevaBarajaDestino);
   }
 
+  const reiniciarJuego = () => {
+    crearMazo()
+    setBarajaCentro([])
+    setBarajaDerecha([])
+  }
+
 
   useEffect(() => {
     crearMazo()
   }, [])
-
-  console.log(barajaIzquierda, barajaCentro, barajaDerecha);
 
   return (
     <section className="container">
       <HomeStyles>
         <Header />
         <section className="BarajasContainer">
-          <div onClick={() => moverCarta(barajaIzquierda, barajaCentro, setBarajaIzquierda, setBarajaCentro)}>
+          <div className={barajaIzquierda.length > 1 ? 'stack' : ''} onClick={() => moverCarta(barajaIzquierda, barajaCentro, setBarajaIzquierda, setBarajaCentro)}>
             {barajaIzquierda.length > 0 &&
               <Card
                 color={barajaIzquierda[0].color}
@@ -55,7 +68,7 @@ export const PokerHome = () => {
               />
             }
           </div>
-          <div onClick={() => moverCarta(barajaCentro, barajaDerecha, setBarajaCentro, setBarajaDerecha)}>
+          <div className={barajaCentro.length > 1 ? 'stack' : ''}  onClick={() => moverCarta(barajaCentro, barajaDerecha, setBarajaCentro, setBarajaDerecha)}>
             {barajaCentro.length > 0 &&
               <Card
                 color={barajaCentro[0].color}
@@ -64,7 +77,7 @@ export const PokerHome = () => {
               />
             }
           </div>
-          <div>
+          <div className={barajaDerecha.length > 1 ? 'stack' : ''}>
             {barajaDerecha.length > 0 &&
               <Card
                 color={barajaDerecha[0].color}
@@ -74,6 +87,9 @@ export const PokerHome = () => {
             }
           </div>
         </section>
+        <div className="buttons">
+          <button onClick={reiniciarJuego}>Reiniciar Juego 🃏</button>
+        </div>
       </HomeStyles>
     </section>
   )
